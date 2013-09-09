@@ -39,7 +39,9 @@ import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.platform.audit.api.LogEntry;
 
 /**
- * @since 5.7.3 - LogEntry Writer for Audit.
+ * LogEntry Writer for Audit.
+ *
+ * @since 5.7.3
  */
 @Provider
 @Produces({ "application/json+nxentity", "application/json" })
