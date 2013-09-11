@@ -165,7 +165,7 @@ public class TaskServiceImpl extends DefaultComponent implements TaskService {
             // notify
             notifyEvent(coreSession, task, document,
                     TaskEventNames.WORKFLOW_TASK_ASSIGNED, eventInfo, comment,
-                    principal, actorIds);
+                    principal, task.getActors());
         }
         return tasks;
     }
@@ -535,8 +535,8 @@ public class TaskServiceImpl extends DefaultComponent implements TaskService {
                 notifyEvent(session, task, session.getDocument(new IdRef(
                         task.getTargetDocumentId())),
                         TaskEventNames.WORKFLOW_TASK_REASSIGNED,
-                        new HashMap<String, Serializable>(), comment, null,
-                        actorIds);
+                        new HashMap<String, Serializable>(), comment,
+                        (NuxeoPrincipal) session.getPrincipal(), actorIds);
 
             }
         }.runUnrestricted();
@@ -551,13 +551,6 @@ public class TaskServiceImpl extends DefaultComponent implements TaskService {
         Map<String, Serializable> eventProperties = new HashMap<String, Serializable>();
         ArrayList<String> notificationRecipients = new ArrayList<String>();
         notificationRecipients.addAll(actorIds);
-        if (principal != null) {
-            if (!notificationRecipients.contains(NuxeoPrincipal.PREFIX
-                    + principal.getName())) {
-                notificationRecipients.add(NuxeoPrincipal.PREFIX
-                        + principal.getName());
-            }
-        }
         eventProperties.put(
                 NotificationConstants.RECIPIENTS_KEY,
                 notificationRecipients.toArray(new String[notificationRecipients.size()]));
@@ -565,7 +558,7 @@ public class TaskServiceImpl extends DefaultComponent implements TaskService {
             eventProperties.putAll(eventInfo);
         }
         TaskEventNotificationHelper.notifyEvent(session, doc, principal, task,
-                TaskEventNames.WORKFLOW_TASK_ASSIGNED, eventProperties,
+                event, eventProperties,
                 comment, null);
     }
 }

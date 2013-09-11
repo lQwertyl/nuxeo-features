@@ -14,28 +14,47 @@
  * Contributors:
  *     dmetzler
  */
-package org.nuxeo.ecm.automation.io.services.contributor;
+package org.nuxeo.ecm.automation.jaxrs.io.directory;
 
 import java.io.IOException;
+import java.util.List;
 
+import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonGenerator;
+import org.nuxeo.ecm.automation.jaxrs.io.EntityListWriter;
 import org.nuxeo.ecm.core.api.ClientException;
 
 /**
- * A Rest contributors knows how to contribute to some Json serialization.
+ *
  *
  * @since 5.7.3
  */
-public interface RestContributor {
+public class DirectoryEntriesWriter extends EntityListWriter<DirectoryEntry> {
+
+    @Override
+    protected String getEntityType() {
+        return "directory-entries";
+    }
+
+    @Override
+    protected void writeItem(JsonGenerator jg, DirectoryEntry item)
+            throws ClientException, IOException {
+
+        DirectoryEntryWriter.writeTo(jg, item);
+
+    }
+
     /**
-     *
      * @param jg
-     * @param ec
-     * @throws ClientException
+     * @param entries
      * @throws IOException
+     * @throws ClientException
+     * @throws JsonGenerationException
      *
      */
-    void contribute(JsonGenerator jg, RestEvaluationContext ec) throws ClientException, IOException;
-
+    public void writeTo(JsonGenerator jg, List<DirectoryEntry> entries)
+            throws JsonGenerationException, ClientException, IOException {
+        writeList(jg, entries);
+    }
 
 }

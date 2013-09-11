@@ -14,28 +14,46 @@
  * Contributors:
  *     dmetzler
  */
-package org.nuxeo.ecm.automation.io.services.contributor;
+package org.nuxeo.ecm.automation.jaxrs.io.directory;
 
-import java.io.IOException;
-
-import org.codehaus.jackson.JsonGenerator;
-import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.DocumentModel;
 
 /**
- * A Rest contributors knows how to contribute to some Json serialization.
+ * Directory entries are basically DocumentModels. So we have to wrap them in an
+ * object that has its own writer.
  *
  * @since 5.7.3
  */
-public interface RestContributor {
+public class DirectoryEntry {
+
+    private DocumentModel doc;
+    private String dirName;
+
     /**
-     *
-     * @param jg
-     * @param ec
-     * @throws ClientException
-     * @throws IOException
+     * @param dirName
+     * @param docEntry
+     */
+    public DirectoryEntry(String dirName, DocumentModel doc) {
+        this.dirName = dirName;
+        this.doc = doc;
+
+    }
+
+    /**
+     * @return
      *
      */
-    void contribute(JsonGenerator jg, RestEvaluationContext ec) throws ClientException, IOException;
+    public String getDirectoryName() {
+        return dirName;
+    }
+
+    /**
+     * @return
+     *
+     */
+    public DocumentModel getDocumentModel() {
+        return doc;
+    }
 
 
 }

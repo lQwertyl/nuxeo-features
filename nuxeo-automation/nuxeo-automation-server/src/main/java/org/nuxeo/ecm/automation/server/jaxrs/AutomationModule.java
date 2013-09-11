@@ -20,6 +20,9 @@ import org.nuxeo.ecm.automation.jaxrs.io.JsonExceptionWriter;
 import org.nuxeo.ecm.automation.jaxrs.io.JsonLoginInfoWriter;
 import org.nuxeo.ecm.automation.jaxrs.io.JsonRecordSetWriter;
 import org.nuxeo.ecm.automation.jaxrs.io.JsonTreeWriter;
+import org.nuxeo.ecm.automation.jaxrs.io.directory.DirectoryEntriesWriter;
+import org.nuxeo.ecm.automation.jaxrs.io.directory.DirectoryEntryReader;
+import org.nuxeo.ecm.automation.jaxrs.io.directory.DirectoryEntryWriter;
 import org.nuxeo.ecm.automation.jaxrs.io.documents.BlobsWriter;
 import org.nuxeo.ecm.automation.jaxrs.io.documents.BusinessAdapterReader;
 import org.nuxeo.ecm.automation.jaxrs.io.documents.JSONDocumentModelReader;
@@ -48,7 +51,6 @@ public class AutomationModule extends WebEngineModule {
     public Set<Class<?>> getClasses() {
 
         Set<Class<?>> result = super.getClasses();
-        result.add(AutomationResource.class);
         // need to be stateless since it needs the request member to be
         // injected
         result.add(MultiPartRequestReader.class);
@@ -80,6 +82,9 @@ public class AutomationModule extends WebEngineModule {
         result.add(new NuxeoGroupListWriter());
         result.add(new NuxeoPrincipalListWriter());
         result.add(new JsonFactoryProvider());
+        result.add(new DirectoryEntriesWriter());
+        result.add(new DirectoryEntryWriter());
+        result.add(new DirectoryEntryReader());
         return result;
     }
 
