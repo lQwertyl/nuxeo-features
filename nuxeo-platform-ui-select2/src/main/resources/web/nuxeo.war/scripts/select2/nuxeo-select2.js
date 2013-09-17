@@ -90,6 +90,7 @@
     } else if (params.operationId == 'UserGroup.Suggestion') {
       op.addParameter("prefix", query.term);
       op.addParameter("searchType", params.searchType);
+      op.addParameter("groupRestriction", params.groupRestriction);
     } else {
       // build default operation for Document
       op.addParameter("queryParams", query.term + "%");
@@ -337,6 +338,14 @@
     jQuery("input[type='hidden'][id$=select2]").each(function(idx, el) {
       initSelect2Widget(jQuery(el));
     });
+    if (typeof registerPostRestoreCallBacks == 'function') {
+      registerPostRestoreCallBacks(function(formSelector, data) {
+        jQuery(formSelector).find("input[type='hidden'][id$=select2]").each(
+            function(idx, el) {
+              initSelect2Widget(jQuery(el));
+            });
+      });
+    }
   }
 
 })();
