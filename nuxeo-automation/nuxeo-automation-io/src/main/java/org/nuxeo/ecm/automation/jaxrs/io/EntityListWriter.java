@@ -26,8 +26,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonGenerator;
+import org.nuxeo.ecm.automation.core.util.Paginable;
 import org.nuxeo.ecm.core.api.ClientException;
 
 /**
@@ -44,12 +44,6 @@ public abstract class EntityListWriter<T> extends EntityWriter<List<T>> {
 
     /**
      * Writes the item in a JsonGenerator.
-     *
-     * @param jg
-     * @param item
-     * @throws IOException
-     * @throws ClientException
-     *
      */
     abstract protected void writeItem(JsonGenerator jg, T item)
             throws ClientException, IOException;
@@ -57,7 +51,6 @@ public abstract class EntityListWriter<T> extends EntityWriter<List<T>> {
     @Override
     public boolean isWriteable(Class<?> type, Type genericType,
             Annotation[] annotations, MediaType mediaType) {
-
         if (!List.class.isAssignableFrom(type)) {
             return false;
         }
@@ -66,9 +59,8 @@ public abstract class EntityListWriter<T> extends EntityWriter<List<T>> {
         if (genericType instanceof ParameterizedType) {
             ParameterizedType paramType = (ParameterizedType) genericType;
             Type actualTypeArguments = paramType.getActualTypeArguments()[0];
-            if (!(type instanceof Class<?>)) {
-                throw new RuntimeException("Invalid class parameter type. "
-                        + type);
+            if (type == null) {
+                throw new RuntimeException("Invalid class parameter type.");
             }
             return ((Class<?>) actualTypeArguments).isAssignableFrom(getItemClass());
 
@@ -80,36 +72,48 @@ public abstract class EntityListWriter<T> extends EntityWriter<List<T>> {
         return (Class<?>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
     }
 
-    /**
-     * @param createGenerator
-     * @param list
-     * @throws IOException
-     * @throws ClientException
-     * @throws JsonGenerationException
-     *
-     */
-
     @Override
     protected void writeEntityBody(JsonGenerator jg, List<T> list)
             throws IOException, ClientException {
-
+        writePaginableHeader(jg, list);
         writeHeader(jg, list);
-        jg.writeArrayFieldStart("items");
+        jg.writeArrayFieldStart("entries");
         for (T item : list) {
             writeItem(jg, item);
         }
         jg.writeEndArray();
     }
 
+    protected void writePaginableHeader(JsonGenerator jg, List<T> list)
+            throws IOException {
+        if (list instanceof Paginable) {
+            Paginable paginable = (Paginable) list;
+            jg.writeBooleanField("isPaginable", true);
+            jg.writeNumberField("resultsCount", paginable.getResultsCount());
+            jg.writeNumberField("pageSize", paginable.getPageSize());
+            jg.writeNumberField("maxPageSize", paginable.getMaxPageSize());
+            jg.writeNumberField("currentPageSize",
+                    paginable.getCurrentPageSize());
+            jg.writeNumberField("currentPageIndex",
+                    paginable.getCurrentPageIndex());
+            jg.writeNumberField("numberOfPages", paginable.getNumberOfPages());
+            jg.writeBooleanField("isPreviousPageAvailable",
+                    paginable.isPreviousPageAvailable());
+            jg.writeBooleanField("isNextPageAvailable",
+                    paginable.isNextPageAvailable());
+            jg.writeBooleanField("isLasPageAvailable",
+                    paginable.isLastPageAvailable());
+            jg.writeBooleanField("isSortable", paginable.isSortable());
+            jg.writeBooleanField("hasError", paginable.hasError());
+            jg.writeStringField("errorMessage", paginable.getErrorMessage());
+        }
+    }
+
     /**
      * Override this method to write into list header
-     *
-     * @param jg
-     * @param list
-     *
      */
-    protected void writeHeader(JsonGenerator jg, List<T> list) {
-
+    protected void writeHeader(JsonGenerator jg, List<T> list)
+            throws IOException {
     }
 
 }
