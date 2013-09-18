@@ -14,7 +14,7 @@
  * Contributors:
  *     dmetzler
  */
-package org.nuxeo.ecm.automation.jaxrs.io.directory;
+package org.nuxeo.ecm.automation.jaxrs.io;
 
 import static org.junit.Assert.assertEquals;
 
@@ -32,6 +32,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.ecm.automation.io.services.JsonFactoryManager;
 import org.nuxeo.ecm.automation.jaxrs.io.JsonHelper;
+import org.nuxeo.ecm.automation.jaxrs.io.directory.DirectoryEntriesWriter;
+import org.nuxeo.ecm.automation.jaxrs.io.directory.DirectoryEntry;
+import org.nuxeo.ecm.automation.jaxrs.io.directory.DirectoryEntryWriter;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.directory.Session;
 import org.nuxeo.ecm.directory.api.DirectoryService;
@@ -88,13 +91,15 @@ public class DirectoryEntryIOTest {
         // When i write it
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         JsonGenerator jg = JsonHelper.createJsonGenerator(out);
-        DirectoryEntryWriter.writeTo(jg, entry);
+        DirectoryEntryWriter dew = new DirectoryEntryWriter();
+        dew.writeEntity(jg, entry);
 
         // I can parse it in Json
         ObjectMapper mapper = new ObjectMapper();
+
         JsonNode node = mapper.readTree(out.toString());
 
-        assertEquals("directory-entry",
+        assertEquals(DirectoryEntryWriter.ENTITY_TYPE,
                 node.get("entity-type").getValueAsText());
         assertEquals(TESTDIRNAME, node.get("directoryName").getValueAsText());
         assertEquals(docEntry.getPropertyValue("vocabulary:label"),
@@ -115,14 +120,13 @@ public class DirectoryEntryIOTest {
         JsonGenerator jg = JsonHelper.createJsonGenerator(out);
 
         DirectoryEntriesWriter writer = new DirectoryEntriesWriter();
-
-        writer.writeTo(jg, entries);
+        writer.writeEntity(jg, entries);
 
         // I can parse it in Json
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.readTree(out.toString());
 
-        assertEquals("directory-entries",
+        assertEquals(DirectoryEntriesWriter.ENTITY_TYPE,
                 node.get("entity-type").getValueAsText());
         ArrayNode jsonEntries = (ArrayNode) node.get("entries");
         assertEquals(entries.size(), jsonEntries.size());
