@@ -118,7 +118,7 @@ public class DirectoryTest extends BaseTest {
         // Then i receive the response as json
         assertEquals("directory-entries",
                 node.get("entity-type").getValueAsText());
-        ArrayNode jsonEntries = (ArrayNode) node.get("items");
+        ArrayNode jsonEntries = (ArrayNode) node.get("entries");
         assertEquals(entries.size(), jsonEntries.size());
 
     }
@@ -230,7 +230,6 @@ public class DirectoryTest extends BaseTest {
     @Test
     public void userDirectoryAreNotEditable() throws Exception {
 
-
         // Given a user directory entry
         UserManager um = Framework.getLocalService(UserManager.class);
         DocumentModel model = um.getUserModel("user1");
@@ -246,10 +245,8 @@ public class DirectoryTest extends BaseTest {
 
     }
 
-
     @Test
     public void groupDirectoryAreNotEditable() throws Exception {
-
 
         // Given a user directory entry
         UserManager um = Framework.getLocalService(UserManager.class);
@@ -265,7 +262,6 @@ public class DirectoryTest extends BaseTest {
                 response.getStatus());
 
     }
-
 
     private String getDirectoryEntryAsJson(DocumentModel dirEntry)
             throws IOException, JsonGenerationException, ClientException {

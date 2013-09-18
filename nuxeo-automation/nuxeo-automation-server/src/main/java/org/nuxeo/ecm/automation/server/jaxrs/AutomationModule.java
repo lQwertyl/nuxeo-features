@@ -20,6 +20,8 @@ import org.nuxeo.ecm.automation.jaxrs.io.JsonExceptionWriter;
 import org.nuxeo.ecm.automation.jaxrs.io.JsonLoginInfoWriter;
 import org.nuxeo.ecm.automation.jaxrs.io.JsonRecordSetWriter;
 import org.nuxeo.ecm.automation.jaxrs.io.JsonTreeWriter;
+import org.nuxeo.ecm.automation.jaxrs.io.audit.LogEntryListWriter;
+import org.nuxeo.ecm.automation.jaxrs.io.audit.LogEntryWriter;
 import org.nuxeo.ecm.automation.jaxrs.io.directory.DirectoryEntriesWriter;
 import org.nuxeo.ecm.automation.jaxrs.io.directory.DirectoryEntryReader;
 import org.nuxeo.ecm.automation.jaxrs.io.directory.DirectoryEntryWriter;
@@ -58,7 +60,6 @@ public class AutomationModule extends WebEngineModule {
         return result;
     }
 
-
     protected static Set<Object> setupSingletons() {
         Set<Object> result = new HashSet<Object>();
         result.add(new JsonRequestReader());
@@ -85,9 +86,10 @@ public class AutomationModule extends WebEngineModule {
         result.add(new DirectoryEntriesWriter());
         result.add(new DirectoryEntryWriter());
         result.add(new DirectoryEntryReader());
+        result.add(new LogEntryWriter());
+        result.add(new LogEntryListWriter());
         return result;
     }
-
 
     @Override
     public Set<Object> getSingletons() {

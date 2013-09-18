@@ -50,7 +50,7 @@ import com.google.inject.Inject;
  */
 @RunWith(FeaturesRunner.class)
 @Features(PlatformFeature.class)
-@Deploy({"org.nuxeo.ecm.automation.io","org.nuxeo.ecm.automation.test"})
+@Deploy({ "org.nuxeo.ecm.automation.io", "org.nuxeo.ecm.automation.test" })
 @LocalDeploy("org.nuxeo.ecm.automation.test:test-directory-contrib.xml")
 public class DirectoryEntryIOTest {
 
@@ -114,7 +114,6 @@ public class DirectoryEntryIOTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         JsonGenerator jg = JsonHelper.createJsonGenerator(out);
 
-
         DirectoryEntriesWriter writer = new DirectoryEntriesWriter();
 
         writer.writeTo(jg, entries);
@@ -125,9 +124,8 @@ public class DirectoryEntryIOTest {
 
         assertEquals("directory-entries",
                 node.get("entity-type").getValueAsText());
-        ArrayNode jsonEntries = (ArrayNode) node.get("items");
+        ArrayNode jsonEntries = (ArrayNode) node.get("entries");
         assertEquals(entries.size(), jsonEntries.size());
-
 
     }
 }
